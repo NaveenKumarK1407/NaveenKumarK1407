@@ -1,47 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:communion_app/core/utils/sizes.dart';
 import 'package:communion_app/core/utils/text_string.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const LoginScreen(),
-    );
-  }
-}
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Login Screen"),
-            ElevatedButton(
-              onPressed: () {
-                // Use Get.to() to navigate to ForgetPassword screen
-                Get.to(() => const ForgetPassword());
-              },
-              child: const Text("Forgot Password?"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'package:communion_app/features/auth/ui/login/login_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ForgetPassword extends StatelessWidget {
   const ForgetPassword({super.key});
