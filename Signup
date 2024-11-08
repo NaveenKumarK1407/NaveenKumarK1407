@@ -1,171 +1,79 @@
 import 'package:communion_app/features/auth/ui/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart'; // Import your SignupScreen here
+import 'package:communion_app/features/auth/ui/login/login_screen.dart'; 
+import 'package:communion_app/common/success_screen/success_screen.dart';
+import 'package:communion_app/core/utils/sizes.dart';
+import 'package:communion_app/core/utils/text_string.dart';
+import 'package:communion_app/core/utils/colors.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  bool _isPasswordVisible = false;
-  final _formKey = GlobalKey<FormState>(); // Form Key to validate form fields
+class VerifyEmailScreen extends StatelessWidget {
+  const VerifyEmailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () => Get.offAll(() => const SignUp()), // Navigate to SignupScreen instead of LoginScreen
+            icon: const Icon(Icons.clear),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(CSizes.defaultSpace),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 100),
+              // Title & Subtitle
+              Text(
+                CTexts.confirmEmail,
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: CSizes.spaceBtwItems),
+              Text(
+                'supp@coding.com', // Display the email address for verification
+                style: Theme.of(context).textTheme.labelLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: CSizes.spaceBtwItems),
+              Text(
+                CTexts.confirmEmailSubTitle,
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: CSizes.spaceBtwItems),
 
-              // Welcome Text
-              const Center(
-                child: Text(
-                  "Welcome, Login Here",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+              // Buttons
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Get.to(() => SuccessScreen(
+                        title: CTexts.yourAccountCreatedTitle,
+                        subTitle: CTexts.yourAccountCreatedSubTitle,
+                        onPressed: () => Get.to(() => const LoginScreen()), // Navigate to LoginScreen
+                      )),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CColors.primary, // Primary color for button background
+                    foregroundColor: CColors.textWhite, // Text color is white
                   ),
+                  child: const Text(CTexts.tContinue),
                 ),
               ),
-              const SizedBox(height: 40),
-
-              // Form Section
-              Form(
-                key: _formKey, // Assigning the form key
-                child: Column(
-                  children: [
-                    // Email Field with Validation
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email),
-                        labelText: 'Email',
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        } else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Password Field with toggle visibility and validation
-                    TextFormField(
-                      obscureText: !_isPasswordVisible,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        labelText: 'Password',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Remember Me & Forgot Password
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Checkbox(value: true, onChanged: (value) {}),
-                            const Text("Remember Me"),
-                          ],
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text("Forgot Password?"),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Sign In Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            // If the form is valid, proceed with the sign-in
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Signing In...')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                        ),
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    // Create Account Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () => Get.to(() => const SignUp()),
-                        child: const Text(
-                          'Create Account',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+              const SizedBox(height: CSizes.spaceBtwItems),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {}, // Implement resend email functionality here
+                  style: TextButton.styleFrom(
+                    foregroundColor: CColors.black, backgroundColor: CColors.white, // Black text color
+                    side: BorderSide(color: CColors.black, width: 1), // Black border
+                  ),
+                  child: const Text(CTexts.resendEmail),
                 ),
-              ),
-
-              // Divider with "OR" in the center
-              const Divider(thickness: 1, height: 20),
-              const Text("OR Sign In With"),
-              const SizedBox(height: 20),
-
-              // Social Media Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.facebook, color: Colors.blue),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.g_translate, color: Colors.red),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.apple, color: Colors.black),
-                  ),
-                ],
               ),
             ],
           ),
