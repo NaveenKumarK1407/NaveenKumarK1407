@@ -1,82 +1,136 @@
-import 'package:communion_app/features/auth/ui/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; // Import your SignupScreen here
-import 'package:communion_app/features/auth/ui/login/login_screen.dart'; 
-import 'package:communion_app/common/success_screen/success_screen.dart';
+import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:communion_app/core/utils/sizes.dart';
 import 'package:communion_app/core/utils/text_string.dart';
-import 'package:communion_app/core/utils/colors.dart';
 
-class VerifyEmailScreen extends StatelessWidget {
-  const VerifyEmailScreen({super.key});
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const LoginScreen(),
+    );
+  }
+}
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () => Get.offAll(() => const SignUp()), // Navigate to SignupScreen instead of LoginScreen
-            icon: const Icon(Icons.clear),
-          ),
-        ],
+      appBar: AppBar(title: const Text("Login")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Login Screen"),
+            ElevatedButton(
+              onPressed: () {
+                // Use Get.to() to navigate to ForgetPassword screen
+                Get.to(() => const ForgetPassword());
+              },
+              child: const Text("Forgot Password?"),
+            ),
+          ],
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(CSizes.defaultSpace),
-          child: Column(
-            children: [
-              // Title & Subtitle
-              Text(
-                CTexts.confirmEmail,
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: CSizes.spaceBtwItems),
-              Text(
-                'supp@coding.com', // Display the email address for verification
-                style: Theme.of(context).textTheme.labelLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: CSizes.spaceBtwItems),
-              Text(
-                CTexts.confirmEmailSubTitle,
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: CSizes.spaceBtwItems),
+    );
+  }
+}
 
-              // Buttons
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Get.to(() => SuccessScreen(
-                        title: CTexts.yourAccountCreatedTitle,
-                        subTitle: CTexts.yourAccountCreatedSubTitle,
-                        onPressed: () => Get.to(() => const LoginScreen()), // Navigate to LoginScreen
-                      )),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CColors.primary, // Primary color for button background
-                    foregroundColor: CColors.textWhite, // Text color is white
-                  ),
-                  child: const Text(CTexts.tContinue),
+class ForgetPassword extends StatelessWidget {
+  const ForgetPassword({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Forgot Password"),
+        automaticallyImplyLeading: true, // Allow the back button
+      ),
+      body: SingleChildScrollView( // Make the body scrollable
+        padding: const EdgeInsets.all(CSizes.defaultSpace),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Heading
+            Text(
+              CTexts.forgetPasswordTitle,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+
+            const SizedBox(height: CSizes.spaceBtwItems),
+            Text(
+              CTexts.forgetPasswordSubTitle,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+
+            const SizedBox(height: CSizes.spaceBtwItems * 2),
+
+            // Text field for entering email
+            TextFormField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: CTexts.email,
+                prefixIcon: Icon(Iconsax.direct_right),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+            ),
+
+            const SizedBox(height: CSizes.spaceBtwItems * 2),
+
+            // Submit Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  final email = emailController.text.trim();
+
+                  if (email.isEmpty) {
+                    // Show error if email is empty
+                    Get.snackbar("Error", "Please enter your email address",
+                        backgroundColor: Colors.red, colorText: Colors.white);
+                  } else {
+                    // Process the email (e.g., trigger password reset)
+                    // You can call an API here to handle the reset process
+
+                    // Show a success message or navigate to the success screen
+                    Get.snackbar("Success", "Password reset email sent!",
+                        backgroundColor: Colors.green, colorText: Colors.white);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Customize button color
+                ),
+                child: const Text("Reset Password"),
+              ),
+            ),
+
+            const SizedBox(height: CSizes.spaceBtwItems * 2),
+
+            // "Back to Login" Button
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  // Use Get.off() to pop this screen and navigate back to LoginScreen
+                  Get.off(() => const LoginScreen());
+                },
+                child: const Text(
+                  "Back to Login",
+                  style: TextStyle(color: Colors.blue),
                 ),
               ),
-              const SizedBox(height: CSizes.spaceBtwItems),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () {}, // Implement resend email functionality here
-                  style: TextButton.styleFrom(
-                    foregroundColor: CColors.black, backgroundColor: CColors.white, // Black text color
-                    side: BorderSide(color: CColors.black, width: 1), // Black border
-                  ),
-                  child: const Text(CTexts.resendEmail),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
