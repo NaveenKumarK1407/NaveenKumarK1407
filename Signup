@@ -1,223 +1,172 @@
+import 'package:communion_app/features/auth/ui/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:communion_app/common/app_exports.dart';
-import 'package:communion_app/common/widgets.login_signup/form_divider.dart';
-import 'package:communion_app/common/widgets.login_signup/socail_bottom.dart';
-import 'package:communion_app/core/utils/colors.dart';
-import 'package:communion_app/core/utils/sizes.dart';
-import 'package:communion_app/core/utils/text_string.dart';
-import 'package:communion_app/features/auth/ui/signup/verify_email.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  _SignUpState createState() => _SignUpState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignUpState extends State<SignUp> {
-  // Form key for validation
-  final _formKey = GlobalKey<FormState>();
-
-  // TextEditing controllers
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-
-  // Validate Email
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your email';
-    } else if (!RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+').hasMatch(value)) {
-      return 'Enter a valid email address';
-    }
-    return null;
-  }
-
-  // Validate Password
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a password';
-    } else if (value.length < 6) {
-      return 'Password should be at least 6 characters';
-    }
-    return null;
-  }
-
-  // Validate Phone Number
-  String? _validatePhoneNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number';
-    } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-      return 'Enter a valid 10-digit phone number';
-    }
-    return null;
-  }
+class _LoginScreenState extends State<LoginScreen> {
+  bool _isPasswordVisible = false;
+  final _formKey = GlobalKey<FormState>(); // Form Key to validate form fields
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sign Up"),
-      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(CSizes.defaultSpace),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                CTexts.signupTitle,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: CSizes.spaceBtwSections),
+              const SizedBox(height: 100),
 
-              // Form with validation
+              // Welcome Text
+              const Center(
+                child: Text(
+                  "Welcome, Login Here",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // Form Section
               Form(
-                key: _formKey, // Assign the form key
+                key: _formKey, // Assigning the form key
                 child: Column(
                   children: [
-                    // First Name and Last Name
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: TextFormField(
-                              controller: _firstNameController,
-                              decoration: InputDecoration(
-                                labelText: CTexts.firstName,
-                                prefixIcon: const Icon(Iconsax.user),
-                              ),
-                            ),
+                    // Email Field with Validation
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.email),
+                        labelText: 'Email',
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        } else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Password Field with toggle visibility and validation
+                    TextFormField(
+                      obscureText: !_isPasswordVisible,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock),
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                           ),
-                          SizedBox(width: CSizes.spaceBtwInputFields),
-                          Flexible(
-                            child: TextFormField(
-                              controller: _lastNameController,
-                              decoration: InputDecoration(
-                                labelText: CTexts.lastName,
-                                prefixIcon: const Icon(Iconsax.user),
-                              ),
-                            ),
-                          ),
-                        ],
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        } else if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
-                    const SizedBox(height: CSizes.spaceBtwInputFields),
+                    const SizedBox(height: 10),
 
-                    // Username
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: CTexts.username,
-                        prefixIcon: Icon(Iconsax.user_edit),
-                      ),
-                    ),
-                    const SizedBox(height: CSizes.spaceBtwInputFields),
-
-                    // Email with validation
-                    TextFormField(
-                      controller: _emailController,
-                      validator: _validateEmail, // Validate email
-                      decoration: const InputDecoration(
-                        labelText: CTexts.email,
-                        prefixIcon: Icon(Iconsax.direct),
-                      ),
-                    ),
-                    const SizedBox(height: CSizes.spaceBtwInputFields),
-
-                    // Phone Number with validation
-                    TextFormField(
-                      controller: _phoneController,
-                      validator: _validatePhoneNumber, // Validate phone number
-                      decoration: const InputDecoration(
-                        labelText: CTexts.phoneNo,
-                        prefixIcon: Icon(Iconsax.call),
-                      ),
-                    ),
-                    const SizedBox(height: CSizes.spaceBtwInputFields),
-
-                    // Password with validation
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: true, // Hide the password
-                      validator: _validatePassword, // Validate password
-                      decoration: const InputDecoration(
-                        labelText: CTexts.password,
-                        prefixIcon: Icon(Iconsax.eye),
-                      ),
-                    ),
-                    const SizedBox(height: CSizes.spaceBtwInputFields),
-
-                    // Terms & Condition Checkbox
+                    // Remember Me & Forgot Password
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Checkbox(value: true, onChanged: (value) {}),
-                        const SizedBox(width: CSizes.spaceBtwItems),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: CTexts.iAgreeTo,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                TextSpan(
-                                  text: CTexts.privacyPolicy,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: CColors.black,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                ),
-                                TextSpan(
-                                  text: CTexts.and,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                TextSpan(
-                                  text: CTexts.termsOfUse,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: CColors.black,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        Row(
+                          children: [
+                            Checkbox(value: true, onChanged: (value) {}),
+                            const Text("Remember Me"),
+                          ],
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text("Forgot Password?"),
                         ),
                       ],
                     ),
-                    const SizedBox(height: CSizes.spaceBtwSections),
+                    const SizedBox(height: 20),
 
-                    // Sign Up Button with onTap handler
+                    // Sign In Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Validate form before navigating
                           if (_formKey.currentState?.validate() ?? false) {
-                            // If the form is valid, navigate to the next screen
-                            Get.to(() => VerifyEmailScreen());
+                            // If the form is valid, proceed with the sign-in
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Signing In...')),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: CColors.primary, // Background color
-                          foregroundColor: CColors.textWhite, // Text color
+                          backgroundColor: Colors.blue,
                         ),
-                        child: const Text(CTexts.createAccount),
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 15),
+
+                    // Create Account Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => Get.to(() => const SignUp()),
+                        child: const Text(
+                          'Create Account',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
-              const CFormDivider(dividerText: CTexts.orSignInWith),
-              const SizedBox(height: CSizes.spaceBtwSections),
 
-              // Social Buttons Section
-              const CSocailButton(),
-              const SizedBox(height: CSizes.spaceBtwSections),
+              // Divider with "OR" in the center
+              const Divider(thickness: 1, height: 20),
+              const Text("OR Sign In With"),
+              const SizedBox(height: 20),
+
+              // Social Media Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.facebook, color: Colors.blue),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.g_translate, color: Colors.red),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.apple, color: Colors.black),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
