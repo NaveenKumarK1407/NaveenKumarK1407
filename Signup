@@ -1,0 +1,227 @@
+import 'package:flutter/material.dart';
+import 'package:communion_app/common/app_exports.dart';
+import 'package:communion_app/common/widgets.login_signup/form_divider.dart';
+import 'package:communion_app/common/widgets.login_signup/socail_bottom.dart';
+import 'package:communion_app/core/utils/colors.dart';
+import 'package:communion_app/core/utils/sizes.dart';
+import 'package:communion_app/core/utils/text_string.dart';
+import 'package:communion_app/features/auth/ui/signup/verify_email.dart';
+import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
+  @override
+  _SignUpState createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  // Form key for validation
+  final _formKey = GlobalKey<FormState>();
+
+  // TextEditing controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
+  // Validate Email
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    } else if (!RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+').hasMatch(value)) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  // Validate Password
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    } else if (value.length < 6) {
+      return 'Password should be at least 6 characters';
+    }
+    return null;
+  }
+
+  // Validate Phone Number
+  String? _validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+      return 'Enter a valid 10-digit phone number';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Sign Up"),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(CSizes.defaultSpace),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                CTexts.signupTitle,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: CSizes.spaceBtwSections),
+
+              // Form with validation
+              Form(
+                key: _formKey, // Assign the form key
+                child: Column(
+                  children: [
+                    // First Name and Last Name
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: TextFormField(
+                              controller: _firstNameController,
+                              decoration: InputDecoration(
+                                labelText: CTexts.firstName,
+                                prefixIcon: const Icon(Iconsax.user),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: CSizes.spaceBtwInputFields),
+                          Flexible(
+                            child: TextFormField(
+                              controller: _lastNameController,
+                              decoration: InputDecoration(
+                                labelText: CTexts.lastName,
+                                prefixIcon: const Icon(Iconsax.user),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: CSizes.spaceBtwInputFields),
+
+                    // Username
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: CTexts.username,
+                        prefixIcon: Icon(Iconsax.user_edit),
+                      ),
+                    ),
+                    const SizedBox(height: CSizes.spaceBtwInputFields),
+
+                    // Email with validation
+                    TextFormField(
+                      controller: _emailController,
+                      validator: _validateEmail, // Validate email
+                      decoration: const InputDecoration(
+                        labelText: CTexts.email,
+                        prefixIcon: Icon(Iconsax.direct),
+                      ),
+                    ),
+                    const SizedBox(height: CSizes.spaceBtwInputFields),
+
+                    // Phone Number with validation
+                    TextFormField(
+                      controller: _phoneController,
+                      validator: _validatePhoneNumber, // Validate phone number
+                      decoration: const InputDecoration(
+                        labelText: CTexts.phoneNo,
+                        prefixIcon: Icon(Iconsax.call),
+                      ),
+                    ),
+                    const SizedBox(height: CSizes.spaceBtwInputFields),
+
+                    // Password with validation
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true, // Hide the password
+                      validator: _validatePassword, // Validate password
+                      decoration: const InputDecoration(
+                        labelText: CTexts.password,
+                        prefixIcon: Icon(Iconsax.eye),
+                      ),
+                    ),
+                    const SizedBox(height: CSizes.spaceBtwInputFields),
+
+                    // Terms & Condition Checkbox
+                    Row(
+                      children: [
+                        Checkbox(value: true, onChanged: (value) {}),
+                        const SizedBox(width: CSizes.spaceBtwItems),
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: CTexts.iAgreeTo,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                TextSpan(
+                                  text: CTexts.privacyPolicy,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: CColors.black,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                ),
+                                TextSpan(
+                                  text: CTexts.and,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                TextSpan(
+                                  text: CTexts.termsOfUse,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: CColors.black,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: CSizes.spaceBtwSections),
+
+                    // Sign Up Button with onTap handler
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Validate form before navigating
+                          if (_formKey.currentState?.validate() ?? false) {
+                            // If the form is valid, navigate to the next screen
+                            Get.to(() => VerifyEmailScreen());
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: CColors.primary, // Background color
+                          foregroundColor: CColors.textWhite, // Text color
+                        ),
+                        child: const Text(CTexts.createAccount),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const CFormDivider(dividerText: CTexts.orSignInWith),
+              const SizedBox(height: CSizes.spaceBtwSections),
+
+              // Social Buttons Section
+              const CSocailButton(),
+              const SizedBox(height: CSizes.spaceBtwSections),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
